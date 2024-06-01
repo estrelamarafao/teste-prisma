@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  movierentals movierentals[] @relation("user")
+
+  @@map("Users")
+}
+
+model Movie {
+  id     String  @id @default(uuid())
+  title  String  @unique  
+  year   Int
+  genre  String
+  releaseDate DateTime
+  duration Int 
+  movierentals movierentals[] @relation("movie")
+
+  @@map("movies")
+}
+
+model movierentals {
+  user User @relation("user", fields: [userId], references: [id])
+  userId String
+  movie Movie @relation("movie", fields: [movieId], references: [id] )
+  movieId String
+
+  @@id([userId, movieId])
+  @@map ("movierentals")
+}
